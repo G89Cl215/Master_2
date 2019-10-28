@@ -1,63 +1,97 @@
 import java.net.*;
 import java.io.*;
 import java.lang.*;
+import java.util.*;
 
 
-class Pos_number
+class					Pos_number
 {
-	int			nbr = 0;
+	static int			nbr = 0;
 
-	void			incr()
+	static void			incr()
 	{
-		this.nbr++;
+		nbr++;
 	}
-	void			decr()
+	static void			decr()
 	{
-		if (this.nbr > 0)
-			this.nbr--;
+		if (nbr > 0)
+			nbr--;
 	}
 }
-
-class Serveur
+class					Serveur
 {
+	static Pos_number	client_nbr = new Pos_number();
 
-	Pos_number	client_nbr = new Pos_number();
-
-	class Connection extends Thread
+	class				Connection extends Thread
 	{
 		Socket		socket;
 
-		public Connection(Socket socket)
+		public			Connection(Socket socket)
 		{
 			this.socket = socket;
 		}
-		public void run()
+
+		public void		run()
 		{
 			OutputStream	client_out;
 
-			client_out = socket.getOutputStream();
+			try {
+				client_out = socket.getOutputStream();
+			} catch (IOException e) {
+				return ;
+			}
+			DataOutputStream		outstream = new DataOutputStream(client_out);
 			Pos_number.incr();
-			while (socket.isConnected())	
+			System.out.println("New client communication established\nNumber of logged clients :" + Pos_number.nbr);
+			while (true)
 			{
-				Thread.currentThread.sleep(5);
-				client_out.println(Pos_number.nbr);
+				try {
+					outstream.writeInt(Pos_number.nbr);
+				} catch (IOException e) {
+					break ;
+				}
+				try {
+					Thread.currentThread().sleep(5);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+					break ;
+				}
+			}
+			try {
+				client_out.close();
+				socket.close();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 			Pos_number.decr();
-			socket.close();
+			System.out.println("Client disconnected.\nNumber of logged clients :" + Pos_number.nbr);
 		}
 	}
 
-	public static void	main(String[] args)
+	Serveur (int port) throws IOException
 	{
-		ServerSocket	serveur = new ServerSocket(1027);
-		Socket 		client;
+		ServerSocket		serveur = new ServerSocket(port);
+		Socket				client;
 
-
-		while (1)
+		while (true)
 		{
-			client = serveur.accept();
-			Connection	new_client = new Connection(client);
-			new_client.run();
+			try {
+				client = serveur.accept();
+			} catch (IOException e) {
+				e.printStackTrace();
+				continue ;
+			}
+			Connection		new_client = new Connection(client);
+			new_client.start();
+		}
+	}
+
+	public static void	main(String args[])
+	{
+		try {
+			Serveur			serveur = new Serveur(1027);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 }
