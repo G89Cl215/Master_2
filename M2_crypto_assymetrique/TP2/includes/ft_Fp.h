@@ -13,11 +13,10 @@
 #ifndef FT_FP_H
 # define FT_FP_H
 
-#ifndef DEG
-# define DEG		5
-#endif
+uint64_t                g_prime;
+size_t                  g_moddeg;
 
-typedef uint64_t		t_pol_Fp[DEG];
+typedef uint64_t        t_pol_Fp[g_moddeg];
 
 uint64_t				ft_inv_modp(uint64_t elem, uint64_t prime);
 
