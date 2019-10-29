@@ -43,6 +43,11 @@ class					Serveur
 			DataOutputStream		outstream = new DataOutputStream(client_out);
 			Pos_number.incr();
 			System.out.println("New client communication established\nNumber of logged clients :" + Pos_number.nbr);
+			try {
+				outstream.writeChars("Welcome to the server !\n Number of logged users:\n");
+			} catch (IOException e) {
+				return ;
+			}
 			while (true)
 			{
 				try {

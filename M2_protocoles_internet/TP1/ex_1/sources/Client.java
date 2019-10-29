@@ -18,8 +18,10 @@ class		Client
 		} catch (IOException i) {
 			System.out.println(i);
 		}
-		int					line; 
+		int					nbr; 
+        String				line; 
 		DataInputStream		input = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
+        BufferedReader      in = new BufferedReader(new InputStreamReader(new BufferedInputStream(socket.getInputStream())));
 		Runtime.getRuntime().addShutdownHook(new Thread()
 		{
 			@Override
@@ -31,15 +33,23 @@ class		Client
 				} catch (IOException i) {
 					System.out.println(i);
 				}
-				System.out.println("Connection closed by peer");
+				System.out.println("\nConnection closed by peer\n");
 				return ;
 			}
 		});
+		try {
+			line = in.readLine();
+			System.out.println(line);
+			line = in.readLine();
+			System.out.println(line);
+		} catch (IOException i) {
+			return ;
+		}
 		while (true)
 		{
 			try {
-				line = input.readInt();
-				System.out.println(line + " ");
+				nbr = input.readInt();
+				System.out.print("\r" + nbr + "      ");
 			} catch (IOException i) {
 				return ;
 			}
