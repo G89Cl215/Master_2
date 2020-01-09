@@ -47,19 +47,28 @@ int		main(int ac, char **av)
 {
 	mpz_t		to_factor;
 	mpz_t		factor;
+	mpz_t		q;
+	mpz_t		r;
 
 	if (ac != 2)
 	{
 		dprintf(STDERR_FILENO, "Factor: wrong number of args.\nShould be one numeric arg.\n");
 		return (2);
 	}
-	mpz_inits(to_factor, factor, NULL);
+	mpz_inits(to_factor, factor, q, r, NULL);
 	mpz_set_str(to_factor, av[1], 10);
 	printf("Factor: trying to factor: ");
 	mpz_out_str(stdout, 10, to_factor);
 	ft_Rho_Pollard_factorsansmem(factor, to_factor);
 	printf("\nFactor: we found the factor: ");
 	mpz_out_str(stdout, 10, factor);
+	printf("\nFactor: Decomposed number: ");
+	mpz_out_str(stdout, 10, factor);
+	printf(" * ");
+	mpz_fdiv_qr(q, r, to_factor, factor);
+	mpz_out_str(stdout, 10, q);
+	printf("\nFactor: Error check: And the rest is: ");
+	mpz_out_str(stdout, 10, r);
 	printf("\n");
 	return (0);
 }
